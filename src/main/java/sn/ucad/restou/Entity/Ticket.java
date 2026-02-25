@@ -13,6 +13,12 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
+import jakarta.validation.constraints.FutureOrPresent;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.PastOrPresent;
+import jakarta.validation.constraints.Pattern;
+import jakarta.validation.constraints.Positive;
 
 @Entity
 @Table(name = "tickets")
@@ -22,24 +28,29 @@ public class Ticket {
     private Long id;
     @ManyToOne
     @JoinColumn(name = "student_id")
-
+    @NotNull(message = "Student is required")
     @JsonIgnoreProperties({ "hibernateLazyInitializer", "handler" })
-
     private Student student;
 
+    @NotBlank(message = "Ticket code is required")
+    @Pattern(regexp = "^TKT-\\d{4}-\\d{3}$", message = "Ticket code must be in the format TKT-YYYY-NNN (EX: TKT-2025-001)")
     @Column(name = "ticket_code", nullable = false, unique = true)
     private String ticketCode;
 
     @Column(name = "purchase_date", nullable = false)
+    @NotNull(message = "Purchase date is required")
+    @PastOrPresent(message = "Purchase date cannot be in the future")
     private LocalDateTime purchaseDate;
 
-
+    @NotNull(message = "Validity date is required")
+    @FutureOrPresent(message = "Validity date must be today or in the future")
     @Column(name = "validity_date", nullable = false)
     private LocalDate validityDate;
 
     @Column(nullable = false)
+    @NotNull(message = "Price is required")
+    @Positive(message = "Price must be positive")
     private Double price;
-
 
     @Column(nullable = false)
     private Boolean used = false;

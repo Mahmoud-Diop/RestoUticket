@@ -5,6 +5,7 @@ import java.util.Optional;
 import org.springframework.stereotype.Service;
 
 import sn.ucad.restou.Entity.Student;
+import sn.ucad.restou.Exception.ResourceNotFoundException;
 import sn.ucad.restou.Repository.StudentRepository;
 
 @Service
@@ -30,8 +31,7 @@ public class StudentService {
 
     public Student updateStudent(Long id, Student studentDetails) {
         Student student = studentRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException(
-                        "Student not found with id : " + id));
+                .orElseThrow(() -> new ResourceNotFoundException("Student", "id", id));
         student.setFirstName(studentDetails.getFirstName());
         student.setLastName(studentDetails.getLastName());
         student.setEmail(studentDetails.getEmail());
@@ -42,13 +42,12 @@ public class StudentService {
     public void deleteStudent(Long id) {
         studentRepository.deleteById(id);
         Student etudiant = studentRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException(
-                        "Student not found with id : " + id));
+                .orElseThrow(() -> new ResourceNotFoundException("Student", "id", id));
         studentRepository.delete(etudiant);
     }
 
     public Iterable<Student> findByFirstNameContaining(String subString) {
-        return studentRepository.findByFirstNameContaining(subString);
+        return studentRepository.findByFirstNameContainingIgnoringCase(subString);
     }
 
     

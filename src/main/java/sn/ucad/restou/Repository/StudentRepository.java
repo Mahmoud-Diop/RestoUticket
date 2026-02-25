@@ -14,6 +14,6 @@ public interface StudentRepository extends CrudRepository<Student, Long> {
 
     Iterable<Student> findByLastName(String lastName);
 
-    Iterable<Student> findByFirstNameContaining(String subString);
+    Iterable<Student> findByFirstNameContainingIgnoringCase(String subString);
 
 }

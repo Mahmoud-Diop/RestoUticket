@@ -33,7 +33,7 @@ public class TicketService {
         return ticketRepository.findById(id);
     }
 
-    // getting a ticket by codeTicket
+    // getting a ticket by status(used|unused)
     public Iterable<Ticket> getTicketsStatus(Boolean used) {
         return ticketRepository.findByUsed(used);
     }
@@ -53,16 +53,15 @@ public class TicketService {
         }
 
         LocalDate today = LocalDate.now();
-        // Ticket pas encore valide
-        if (ticket.getValidityDate().isAfter(today)) {
-            throw new RuntimeException("Ticket is not valid yet");
-
-        }
-        // Ticket expiré
+        // expired Ticket`
         if (ticket.getValidityDate().isBefore(today)) {
             throw new RuntimeException("Ticket has expired");
 
         }
+        if (ticket.getValidityDate().isBefore(ticket.getPurchaseDate().toLocalDate())) {
+            throw new RuntimeException("Validity date must be after purchase date");
+        }
+
         ticket.setUsed(true);
         return ticketRepository.save(ticket);
     }
